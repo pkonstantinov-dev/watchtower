@@ -1,0 +1,24 @@
+{
+  "name": "watchtower",
+  "version": "1.0.0",
+  "bin": {
+    "watchtower": "bin/watchtower.js"
+  },
+  "files": ["bin", "src", "index.html", "vite.config.js"],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check": "node src/mentions.check.js"
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vite": "^8.3.8"
+  }
+}

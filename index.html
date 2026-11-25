@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Watchtower</title>
+    <style>
+      :root {
+        --bg: #f6f7f9; --card: #fff; --text: #1d2125; --muted: #626f86; --line: #e4e6ea;
+        --todo: #dfe1e6; --todo-text: #44546f; --progress: #cce0ff; --progress-text: #0055cc;
+        --done: #dcfff1; --done-text: #216e4e; --accent: #f5a623; --accent-bg: #fff7e6; --mine: #f1f2f4;
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #161a1d; --card: #1d2125; --text: #dee4ea; --muted: #8c9bab; --line: #2c333a;
+          --todo: #2c333a; --todo-text: #b6c2cf; --progress: #09326c; --progress-text: #85b8ff;
+          --done: #164b35; --done-text: #7ee2b8; --accent-bg: #3a2c10; --mine: #22272b;
+        }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 16px 24px 48px; background: var(--bg); color: var(--text); font: 14px/1.4 -apple-system, system-ui, sans-serif; }
+      a { color: var(--progress-text); text-decoration: none; font-weight: 600; }
+      header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; position: sticky; top: 0; background: var(--bg); padding: 8px 0; z-index: 1; }
+      h1 { font-size: 18px; margin: 0 12px 0 0; }
+      header small, .empty { color: var(--muted); }
+      button { font: inherit; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; }
+      button.accent { border-color: var(--accent); background: var(--accent-bg); }
+      .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+      .card.changed { border-color: var(--accent); box-shadow: inset 4px 0 var(--accent); }
+      h2 { display: flex; align-items: center; gap: 10px; font-size: 15px; margin: 0; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+      h2 .summary { flex: 1; font-weight: 500; }
+      .card h2 { cursor: pointer; user-select: none; }
+      .card h2:last-child { border-bottom: 0; }
+      button.toggle { border: 0; background: none; padding: 0 2px; width: 18px; color: var(--muted); }
+      button.star { border: 0; background: none; padding: 0 2px; font-size: 16px; color: var(--muted); }
+      button.star.on { color: var(--accent); }
+      .types.disabled { opacity: 0.4; pointer-events: none; }
+      .mention-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #e2483d; box-shadow: 0 0 0 2px var(--card); vertical-align: middle; flex: none; }
+      .mention-ring { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 2px solid #e2483d; vertical-align: middle; flex: none; }
+      .mention-count { color: #e2483d; font-weight: 600; }
+      .progress { color: var(--muted); font-size: 12px; font-weight: 400; white-space: nowrap; }
+      table { width: 100%; border-collapse: collapse; }
+      td { padding: 6px 14px; border-top: 1px solid var(--line); vertical-align: middle; }
+      tr:first-child td { border-top: 0; }
+      tr.mine { background: var(--mine); color: var(--muted); }
+      tr.changed { background: var(--accent-bg); }
+      td.subtype, td.assignee, td.state { width: 1%; white-space: nowrap; }
+      td.subtype { color: var(--muted); }
+      .types { display: flex; gap: 6px; }
+      .chip { padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; user-select: none; color: var(--muted); }
+      .chip.on { border-color: var(--progress-text); color: var(--text); }
+      .chip input { display: none; }
+      .chip small { color: var(--muted); margin-left: 2px; }
+      details.sprint { margin-bottom: 20px; }
+      details.sprint > summary { font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+      details.sprint > summary small { font-weight: 400; color: var(--muted); margin-left: 8px; font-size: 13px; }
+      .sprint-state { font-size: 11px; font-weight: 600; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+      .sprint-state.active { background: var(--progress); color: var(--progress-text); }
+      .sprint-state.future { background: var(--todo); color: var(--todo-text); }
+      .sprint-state.closed { background: var(--done); color: var(--done-text); }
+      .type { font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 1px 6px; border-radius: 4px; color: #fff; }
+      .type.story { background: #22a06b; }
+      .type.bug { background: #c9372c; }
+      .type.task { background: #1d7afc; }
+      .type.spike { background: #8270db; }
+      .owner { color: var(--muted); font-weight: 400; font-size: 13px; white-space: nowrap; }
+      .owner.mine { color: var(--text); font-weight: 600; }
+      .no-subtasks { margin: 0; padding: 8px 14px; color: var(--muted); }
+      .status { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+      .status.new { background: var(--todo); color: var(--todo-text); }
+      .status.indeterminate { background: var(--progress); color: var(--progress-text); }
+      .status.done { background: var(--done); color: var(--done-text); }
+      .was { margin-left: 8px; font-size: 12px; color: var(--muted); }
+      .error { white-space: pre-wrap; color: #c9372c; background: var(--card); padding: 12px; border-radius: 8px; }
+      .panel { max-width: 420px; margin: 10vh auto 0; display: flex; flex-direction: column; gap: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
+      .panel h1 { margin: 0; }
+      .panel label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; }
+      .panel small, .muted { color: var(--muted); font-weight: 400; margin: 0; }
+      .panel .error { margin: 0; padding: 0; }
+      input:not([type=checkbox]), select { font: inherit; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+      .actions { display: flex; align-items: center; gap: 8px; }
+      button.link { border: 0; background: none; color: var(--muted); }
+      .account { margin-left: auto; display: flex; gap: 4px; }
+      dialog.drawer { margin: 0 0 0 auto; width: min(360px, 100vw); height: 100dvh; max-height: 100dvh; padding: 0; border: 0; border-left: 1px solid var(--line); background: var(--card); color: var(--text); }
+      dialog.drawer::backdrop { background: rgb(0 0 0 / 0.4); }
+      .drawer > div { min-height: 100%; padding: 16px 20px; display: flex; flex-direction: column; gap: 18px; }
+      .drawer-head { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 700; }
+      .feature { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+      .feature input { margin-top: 3px; }
+      .feature span { display: flex; flex-direction: column; gap: 2px; }
+      .feature small { color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
