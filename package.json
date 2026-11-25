@@ -1,10 +1,15 @@
 {
   "name": "watchtower",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "bin": {
     "watchtower": "bin/watchtower.js"
   },
-  "files": ["bin", "src", "index.html", "vite.config.js"],
+  "files": [
+    "bin",
+    "src",
+    "index.html",
+    "vite.config.js"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -4,13 +4,46 @@ Local board of Jira stories where you're assigned at least one subtask, with eve
 
 ## Run
 
-Needs Node.js 20.19+ or 22.12+ and git.
-
 ```
 npx github:pkonstantinov-dev/watchtower
 ```
 
 This installs and starts the board, then opens http://localhost:5180 in your browser. Run the same command again next time. To get a specific version, add a tag: `npx github:pkonstantinov-dev/watchtower#v1.0.0`.
+
+To use a different port, add `--port`:
+
+```
+npx github:pkonstantinov-dev/watchtower --port 3000
+```
+
+Each port is a separate site for the browser, so you sign in again the first time you use a new port.
+
+## Requirements
+
+Node.js 20.19+ or 22.12+, and git. Check with `node --version` and `git --version`.
+
+macOS ([Homebrew](https://brew.sh)):
+
+```
+brew install node git
+```
+
+Windows (PowerShell):
+
+```
+winget install OpenJS.NodeJS.LTS
+winget install Git.Git
+```
+
+Linux (most distributions ship an older Node.js, so use [nvm](https://github.com/nvm-sh/nvm)):
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+nvm install --lts
+sudo apt install git
+```
+
+Open a new terminal after the install, so the new commands are found. On Linux, use your distribution's package manager for git if it is not `apt`.
 
 To work on the code, clone the repo and run `npm install` and `npm run dev`.
 
