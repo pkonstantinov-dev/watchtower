@@ -8,7 +8,15 @@ Local board of Jira stories where you're assigned at least one subtask, with eve
 npx github:pkonstantinov-dev/watchtower
 ```
 
-This installs and starts the board, then opens http://localhost:5180 in your browser. Run the same command again next time. To get a specific version, add a tag: `npx github:pkonstantinov-dev/watchtower#v1.0.0`.
+This installs and starts the board, then opens http://localhost:5180 in your browser. Run the same command again next time. It always starts the latest version.
+
+To run a specific version, add its tag after `#`:
+
+```
+npx github:pkonstantinov-dev/watchtower#v1.1.0
+```
+
+All versions are listed on the [tags page](https://github.com/pkonstantinov-dev/watchtower/tags).
 
 To use a different port, add `--port`:
 
