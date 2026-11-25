@@ -86,7 +86,11 @@ function FeatureDrawer({ features, onChange }) {
   const close = () => dialog.current.close()
   return (
     <>
-      <button onClick={() => dialog.current.showModal()}>Features</button>
+      <button className="burger" onClick={() => dialog.current.showModal()} aria-label="Features" title="Features">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </button>
       <dialog ref={dialog} className="drawer" aria-labelledby="features-title" onClick={e => e.target === dialog.current && close()}>
         <div>
           <div className="drawer-head">
@@ -284,6 +288,7 @@ function Board({ auth, space, onSwitchSpace, onSignOut }) {
   return (
     <>
       <header>
+        <FeatureDrawer features={features} onChange={setFeatures} />
         <h1>{space.name} work I'm on</h1>
         {features.focus && (
           <button className={focusMode ? 'accent' : ''} aria-pressed={focusMode} onClick={() => setFocusMode(on => !on)}>
@@ -310,7 +315,6 @@ function Board({ auth, space, onSwitchSpace, onSignOut }) {
         )}
         {updatedAt && <small>Updated {updatedAt.toLocaleTimeString()}</small>}
         <span className="account">
-          <FeatureDrawer features={features} onChange={setFeatures} />
           <button onClick={onSwitchSpace}>Switch space</button>
           <button className="link" onClick={onSignOut} title={`${auth.displayName} on ${auth.site}`}>Sign out</button>
         </span>
